@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  transactions Transaction[]
+}
+
+model Transaction {
+  id     String          @id @default(auto()) @map("_id") @db.ObjectId
+  amount String
+  type   TransactionType
+
+  Account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?  @db.ObjectId
+}
+
+enum TransactionType {
+  UserMoneyIn
+  UserMoneyOut
+}
