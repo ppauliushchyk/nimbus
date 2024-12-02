@@ -1,3 +1,56 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "prettier",
+    "airbnb",
+    "airbnb/whitespace",
+    "plugin:cypress/recommended"
+  ],
+  "plugins": ["@stylistic/js", "@stylistic/ts", "@stylistic/jsx"],
+  "rules": {
+    "camelcase": "off",
+    "curly": ["error", "all"],
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": { "order": "asc", "caseInsensitive": true },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-console": "error",
+    "no-unused-vars": "error",
+    "quotes": ["error", "double"],
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    ],
+    "react/jsx-sort-props": "error",
+    "sort-keys": "error",
+    "@stylistic/js/object-property-newline": "error",
+    "@stylistic/js/padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": ["const", "let", "var"], "next": "*" },
+      {
+        "blankLine": "any",
+        "prev": ["const", "let", "var"],
+        "next": ["const", "let", "var"]
+      },
+      { "blankLine": "always", "prev": ["block", "block-like"], "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": ["block", "block-like"] }
+    ],
+    "@stylistic/js/quotes": ["error", "double"]
+  }
 }

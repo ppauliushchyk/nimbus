@@ -3,22 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
+    "cypress:open": "cypress open",
+    "dev": "next dev --turbopack",
+    "lint:fix": "next lint --fix",
+    "lint": "next lint",
     "start": "next start",
-    "lint": "next lint"
+    "test:component:headless": "cypress run --component",
+    "test:component": "cypress open --component",
+    "test:e2e:headless": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
+    "test:e2e": "start-server-and-test dev http://localhost:3000 \"cypress open --e2e\""
   },
   "dependencies": {
+    "bootstrap": "5.3.3",
+    "classnames": "^2.5.1",
+    "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
-    "next": "15.0.3"
+    "react-dom": "19.0.0-rc-66855b96-20241106"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@stylistic/eslint-plugin-js": "^2.11.0",
+    "@stylistic/eslint-plugin-jsx": "^2.11.0",
+    "@stylistic/eslint-plugin-ts": "^2.11.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cypress": "^13.16.0",
     "eslint": "^8",
-    "eslint-config-next": "15.0.3"
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-next": "15.0.3",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-cypress": "^4.1.0",
+    "prisma": "^6.0.1",
+    "sass": "^1.71.0",
+    "start-server-and-test": "^2.0.8",
+    "typescript": "^5"
   }
 }
