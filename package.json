@@ -18,9 +18,11 @@
     "@prisma/client": "^6.0.1",
     "bootstrap": "5.3.3",
     "classnames": "^2.5.1",
+    "jose": "^5.9.6",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^2.11.0",
@@ -36,7 +38,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^4.1.0",
     "prisma": "^6.0.1",
-    "sass": "^1.71.0",
+    "sass": "1.71.0",
     "start-server-and-test": "^2.0.8",
     "typescript": "^5"
   }
