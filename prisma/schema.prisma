@@ -8,12 +8,18 @@ datasource db {
 }
 
 model Account {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   transactions Transaction[]
 }
 
 model Transaction {
-  id     String          @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   amount String
   type   TransactionType
 
