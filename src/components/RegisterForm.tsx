@@ -19,7 +19,9 @@ export default function RegisterForm() {
 
   return (
     <form action={formAction}>
-      <h2 className="fs-5 fw-bold mb-3">Or register a new account</h2>
+      <h2 className="fs-6 fw-bold text-center mb-4">
+        Or register a new account
+      </h2>
 
       {state?.error && (
         <div className="alert alert-danger mb-4 text-break" role="alert">
@@ -27,7 +29,7 @@ export default function RegisterForm() {
         </div>
       )}
 
-      <SubmitButton className="btn-outline-secondary w-100 rounded-3">
+      <SubmitButton className="btn-secondary btn-lg w-100 rounded-3">
         Register
       </SubmitButton>
     </form>

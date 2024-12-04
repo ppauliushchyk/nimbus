@@ -8,11 +8,35 @@
 
 $enable-shadows: false;
 
+$danger: #ef4444;
+$dark: #212529;
+$info: #4c82f7;
+$light: #ffffff;
+$primary: #6366f1;
+$secondary: #e9ecef;
+$success: #22c55e;
+$warning: #ffba08;
+
+$border-color: #e2e5f1;
+$card-border-color: #e2e5f1;
+$hr-color: #e2e5f1;
+
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
 
 // 4. Include any default map overrides here
+
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+);
 
 // 5. Include remainder of required parts
 @import "~bootstrap/scss/maps";
