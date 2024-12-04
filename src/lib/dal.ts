@@ -7,7 +7,7 @@ import { cache } from "react";
 import prisma from "@/lib/prisma";
 import { decrypt } from "@/lib/session";
 
-export const verifySession = cache(async () => {
+export const verifySessionAsync = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;
   const session = await decrypt(cookie);
 
@@ -21,15 +21,17 @@ export const verifySession = cache(async () => {
   };
 });
 
-export const readAccount = cache(async () => {
+export const readAccountAsync = cache(async () => {
+  const session = await verifySessionAsync();
+
+  if (!session) {
+    return null;
+  }
+
   try {
-    const session = await verifySession();
-
-    if (!session) {
-      return null;
-    }
-
-    return prisma.account.findFirstOrThrow({ where: { id: session.id } });
+    return prisma.account.findUniqueOrThrow({
+      where: { id: session.id.toString() },
+    });
   } catch {
     return null;
   }

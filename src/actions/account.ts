@@ -20,7 +20,7 @@ export async function loginAsync(_state: FormState, payload: FormData) {
   }
 
   try {
-    const account = await prisma.account.findFirstOrThrow({
+    const account = await prisma.account.findUniqueOrThrow({
       where: { id: parsed.data.id },
     });
 
@@ -46,7 +46,7 @@ export async function logoutAsync() {
 
 export async function registerAsync() {
   try {
-    const account = await prisma.account.create({});
+    const account = await prisma.account.create({ data: {} });
 
     await createSession(account.id);
 
