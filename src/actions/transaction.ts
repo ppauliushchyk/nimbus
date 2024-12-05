@@ -1,39 +1,56 @@
 "use server";
 
 import { TransactionType } from "@prisma/client";
-import { coerce, nativeEnum, z } from "zod";
+import { revalidatePath } from "next/cache";
+import { coerce, z } from "zod";
 
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
-export async function readTransactions(skip: number) {
+export async function readBalanceAsync() {
   const { id } = await readAccountAsync();
 
-  return prisma.transaction.findMany({
-    orderBy: { updatedAt: "desc" },
-    skip,
-    take: 50,
-    where: { accountId: id },
+  const [{ balance }] = await prisma.transaction.aggregateRaw({
+    pipeline: [
+      { $match: { accountId: { $oid: id } } },
+      {
+        $group: {
+          _id: null,
+          deposits: {
+            $sum: {
+              $cond: {
+                else: 0,
+                if: { $eq: ["$type", TransactionType.UserMoneyIn] },
+                then: "$amount",
+              },
+            },
+          },
+          withdrawals: {
+            $sum: {
+              $cond: {
+                else: 0,
+                if: { $eq: ["$type", TransactionType.UserMoneyOut] },
+                then: "$amount",
+              },
+            },
+          },
+        },
+      },
+      { $project: { balance: { $subtract: ["$deposits", "$withdrawals"] } } },
+    ],
   });
+
+  return balance;
 }
 
-const createSchema = z.object({
-  amount: coerce.number(),
-  type: nativeEnum(TransactionType),
-});
+const transactionSchema = z.object({ amount: coerce.number().gt(0) });
 
 type FormState =
-  | { errors?: { amount?: string[]; type?: string[] }; message?: string }
+  | { errors?: { amount?: string[] }; message?: string }
   | undefined;
 
-export async function createTransactionAsync(
-  _state: FormState,
-  payload: FormData,
-) {
-  const parsed = createSchema.safeParse({
-    amount: payload.get("amount"),
-    type: payload.get("type"),
-  });
+export async function depositAsync(_state: FormState, payload: FormData) {
+  const parsed = transactionSchema.safeParse({ amount: payload.get("amount") });
 
   if (!parsed.success) {
     return { errors: parsed.error.flatten().fieldErrors };
@@ -47,10 +64,57 @@ export async function createTransactionAsync(
     await prisma.transaction.create({
       data: {
         accountId: account.id,
-        amount: parsed.data.amount.toString(),
-        type: parsed.data.type,
+        amount: parsed.data.amount,
+        type: TransactionType.UserMoneyIn,
       },
     });
+
+    revalidatePath("/dashboard", "page");
+
+    return { success: true };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return {
+        error: error.message,
+        success: false,
+      };
+    }
+
+    return { success: false };
+  }
+}
+
+export async function withdrawAsync(_state: FormState, payload: FormData) {
+  const parsed = transactionSchema.safeParse({ amount: payload.get("amount") });
+
+  if (!parsed.success) {
+    return { errors: parsed.error.flatten().fieldErrors };
+  }
+
+  try {
+    const { id } = await readAccountAsync();
+
+    const account = await prisma.account.findUniqueOrThrow({ where: { id } });
+
+    const balance = await readBalanceAsync();
+
+    if (parsed.data.amount > balance) {
+      return {
+        error:
+          "Your current balance is insufficient to complete this transaction.",
+        success: false,
+      };
+    }
+
+    await prisma.transaction.create({
+      data: {
+        accountId: account.id,
+        amount: parsed.data.amount,
+        type: TransactionType.UserMoneyOut,
+      },
+    });
+
+    revalidatePath("/dashboard", "page");
 
     return { success: true };
   } catch (error: unknown) {
