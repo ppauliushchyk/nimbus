@@ -8,14 +8,14 @@
 
 $enable-shadows: false;
 
-$danger: #ef4444;
-$dark: #212529;
-$info: #4c82f7;
-$light: #ffffff;
-$primary: #6366f1;
+$danger: #df4759;
+$dark: #1b2a4e;
+$info: #7c69ef;
+$light: #f9fbfd;
+$primary: #335eea;
 $secondary: #e9ecef;
-$success: #22c55e;
-$warning: #ffba08;
+$success: #42ba96;
+$warning: #fad776;
 
 $border-color: #e2e5f1;
 $card-border-color: #e2e5f1;
@@ -83,3 +83,25 @@ $theme-colors: (
 @import "~bootstrap/scss/utilities/api";
 
 // 8. Add additional custom code here
+
+@supports (animation-timeline: scroll()) {
+  .sticky-top > nav {
+    animation: scroll-shadow linear both;
+    animation-timeline: scroll();
+    animation-range: $spacer calc($spacer + 72px);
+    background-color: $body-bg;
+    box-shadow: none;
+  }
+
+  @keyframes scroll-shadow {
+    from {
+      background-color: $body-bg;
+      box-shadow: none;
+    }
+
+    to {
+      background-color: $body-tertiary-bg;
+      box-shadow: $box-shadow-lg;
+    }
+  }
+}
