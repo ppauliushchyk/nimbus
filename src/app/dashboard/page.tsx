@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 
-import { readBalanceAsync } from "@/actions/transaction";
+import Balance from "@/components/Balance";
 import Copy from "@/components/ui/Copy";
 import TransactionTypeIcon from "@/components/ui/TransactionTypeIcon";
 import Trigger from "@/components/ui/Trigger";
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
+export const revalidate = 10;
 
 export default async function Page({
   searchParams,
@@ -35,8 +36,6 @@ export default async function Page({
     where: { accountId: account.id },
   });
 
-  const balance = await readBalanceAsync();
-
   return (
     <div className="row">
       <div className="col-12 col-md-5 col-lg-4 mx-auto">
@@ -55,13 +54,7 @@ export default async function Page({
               <div className="fs-7 text-truncate opacity-50">Balance</div>
 
               <div className="fs-2 fw-bold text-truncate">
-                {new Intl.NumberFormat("en-US", {
-                  currency: "USD",
-                  style: "currency",
-                }).format(
-                  // @ts-expect-error strings are allowed
-                  balance,
-                )}
+                <Balance />
               </div>
             </div>
           </div>
