@@ -100,3 +100,35 @@ A robust financial application built with Next.js, Prisma ORM, MongoDB, and Boot
      ```bash
      npm run test::headless
      ```
+
+## Testing Realtime Balance Updates
+
+**Running the Tests:**
+
+1. **Start the Application:**
+
+   - Open your terminal and navigate to the project directory.
+
+   - Run the following command to start the application in development mode:
+
+     ```bash
+     npm run dev
+     ```
+
+   - This will start the application server on a specific port (http://localhost:3000).
+
+2. **Run the Realtime Balance Update Tests:**
+
+   - In a separate terminal window, navigate to the project directory.
+
+   - Run the following command to execute the test script:
+
+     ```bash
+     npm run test:balance-updates
+     ```
+
+   - This command will typically:
+
+     - Simulate a deposit transaction.
+     - Wait for a second.
+     - Verify that the balance is updated in the application every 10 seconds.
