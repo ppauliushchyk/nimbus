@@ -2,16 +2,16 @@
 
 import { TransactionType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { coerce, z } from "zod";
+import { string, z } from "zod";
 
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
-export async function readBalanceAsync() {
+export async function readBalanceAsync(): Promise<string> {
   const account = await readAccountAsync();
 
   if (!account) {
-    return 0;
+    return "0";
   }
 
   const result = (await prisma.transaction.aggregateRaw({
@@ -25,7 +25,7 @@ export async function readBalanceAsync() {
               $cond: {
                 else: 0,
                 if: { $eq: ["$type", TransactionType.UserMoneyIn] },
-                then: "$amount",
+                then: { $toDecimal: "$amount" },
               },
             },
           },
@@ -34,7 +34,7 @@ export async function readBalanceAsync() {
               $cond: {
                 else: 0,
                 if: { $eq: ["$type", TransactionType.UserMoneyOut] },
-                then: "$amount",
+                then: { $toDecimal: "$amount" },
               },
             },
           },
@@ -42,16 +42,16 @@ export async function readBalanceAsync() {
       },
       { $project: { balance: { $subtract: ["$deposits", "$withdrawals"] } } },
     ],
-  })) as unknown as [{ balance: number }];
+  })) as unknown as [{ balance: { $numberDecimal: string } }];
 
   if (!result || !result[0] || !result[0].balance) {
-    return 0;
+    return "0";
   }
 
-  return result[0].balance;
+  return result[0].balance.$numberDecimal;
 }
 
-const transactionSchema = z.object({ amount: coerce.number().gt(0) });
+const transactionSchema = z.object({ amount: string().regex(/^\d+(\.\d+)?$/) });
 
 type FormState =
   | { errors?: { amount?: string[] }; message?: string }
@@ -122,9 +122,46 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
       where: { id: rawAccount.id },
     });
 
-    const balance = await readBalanceAsync();
+    const [{ insufficient }] = (await prisma.transaction.aggregateRaw({
+      pipeline: [
+        { $match: { accountId: { $oid: account.id } } },
+        {
+          $group: {
+            _id: null,
+            deposits: {
+              $sum: {
+                $cond: {
+                  else: 0,
+                  if: { $eq: ["$type", TransactionType.UserMoneyIn] },
+                  then: { $toDecimal: "$amount" },
+                },
+              },
+            },
+            withdrawals: {
+              $sum: {
+                $cond: {
+                  else: 0,
+                  if: { $eq: ["$type", TransactionType.UserMoneyOut] },
+                  then: { $toDecimal: "$amount" },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            insufficient: {
+              $gt: [
+                { $toDecimal: parsed.data.amount },
+                { $subtract: ["$deposits", "$withdrawals"] },
+              ],
+            },
+          },
+        },
+      ],
+    })) as unknown as [{ insufficient: boolean }];
 
-    if (parsed.data.amount > balance) {
+    if (insufficient) {
       return {
         error:
           "Your current balance is insufficient to complete this transaction.",

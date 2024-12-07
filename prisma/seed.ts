@@ -20,7 +20,7 @@ async function main() {
     await prisma.transaction.create({
       data: {
         accountId: account.id,
-        amount: +faker.finance.amount({ symbol: "" }),
+        amount: faker.finance.amount({ symbol: "" }),
         type: faker.helpers.enumValue(TransactionType),
       },
     });

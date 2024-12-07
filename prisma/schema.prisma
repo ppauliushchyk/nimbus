@@ -20,7 +20,7 @@ model Transaction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  amount Float
+  amount String
   type   TransactionType
 
   Account   Account? @relation(fields: [accountId], references: [id])

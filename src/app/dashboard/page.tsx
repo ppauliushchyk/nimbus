@@ -79,7 +79,10 @@ export default async function Page({
                 {new Intl.NumberFormat("en-US", {
                   currency: "USD",
                   style: "currency",
-                }).format(balance)}
+                }).format(
+                  // @ts-expect-error strings are allowed
+                  balance,
+                )}
               </div>
             </div>
           </div>
@@ -137,7 +140,10 @@ export default async function Page({
                     {new Intl.NumberFormat("en-US", {
                       currency: "USD",
                       style: "currency",
-                    }).format(item.amount)}
+                    }).format(
+                      // @ts-expect-error strings are allowed
+                      item.amount,
+                    )}
                   </td>
 
                   <td className="text-body-tertiary rounded-end">
