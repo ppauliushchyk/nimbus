@@ -32,21 +32,75 @@ describe("dashboard", () => {
       });
 
       it("handles deposit modal open", () => {
-        cy.get("a[href='/dashboard/deposit']").click();
+        cy.intercept("POST", "/dashboard/deposit").as("route:deposit");
 
-        cy.url().should("include", "/dashboard/deposit");
+        cy.get("[data-cy='balance']")
+          .should("be.visible")
+          .then((element) => {
+            const current = element.text().replace("$", "").replace(",", "");
 
-        cy.get(".modal").should("be.visible");
-        cy.get("h2").should("be.visible").should("have.text", "Deposit funds");
+            cy.get("a[href='/dashboard/deposit']").click();
+
+            cy.url().should("include", "/dashboard/deposit");
+
+            cy.get(".modal").should("be.visible");
+            cy.get("h2")
+              .should("be.visible")
+              .should("have.text", "Deposit funds");
+
+            cy.get(".modal input[name='amount']").type("10");
+            cy.get(".modal button[type='submit']").click();
+
+            cy.wait("@route:deposit").then(() => {
+              cy.url().should("include", "/dashboard");
+
+              cy.get("[data-cy='balance']")
+                .should("be.visible")
+                .should(
+                  "include.text",
+                  new Intl.NumberFormat("en-US").format(
+                    Math.abs(parseInt(current, 10) + 10)
+                  )
+                );
+            });
+          });
       });
 
       it("handles withdraw modal open", () => {
-        cy.get("a[href='/dashboard/withdraw']").click();
+        cy.intercept("POST", "/dashboard/withdraw").as("route:withdraw");
 
-        cy.url().should("include", "/dashboard/withdraw");
+        cy.get("[data-cy='balance']")
+          .should("be.visible")
+          .then((element) => {
+            const current = element.text().replace("$", "").replace(",", "");
 
-        cy.get(".modal").should("be.visible");
-        cy.get("h2").should("be.visible").should("have.text", "Withdraw funds");
+            cy.get("a[href='/dashboard/withdraw']").click();
+
+            cy.url().should("include", "/dashboard/withdraw");
+
+            cy.get(".modal").should("be.visible");
+            cy.get("h2")
+              .should("be.visible")
+              .should("have.text", "Withdraw funds");
+
+            cy.get(".modal input[name='amount']").type("10");
+            cy.get(".modal button[type='submit']").click();
+
+            cy.wait("@route:withdraw").then(() => {
+              cy.url().should("include", "/dashboard");
+
+              cy.scrollTo(0, 0);
+
+              cy.get("[data-cy='balance']")
+                .should("be.visible")
+                .should(
+                  "include.text",
+                  new Intl.NumberFormat("en-US").format(
+                    Math.abs(parseInt(current, 10) - 10)
+                  )
+                );
+            });
+          });
       });
 
       it("handles balance refresh", () => {
