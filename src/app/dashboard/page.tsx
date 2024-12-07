@@ -1,6 +1,3 @@
-import { TransactionType } from "@prisma/client";
-import { FaArrowDown } from "@react-icons/all-files/fa/FaArrowDown";
-import { FaArrowUp } from "@react-icons/all-files/fa/FaArrowUp";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,29 +5,11 @@ import React from "react";
 
 import { readBalanceAsync } from "@/actions/transaction";
 import Copy from "@/components/ui/Copy";
+import TransactionTypeIcon from "@/components/ui/TransactionTypeIcon";
 import Trigger from "@/components/ui/Trigger";
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
-function readIcon(type: TransactionType) {
-  switch (type) {
-    case "UserMoneyIn": {
-      return <FaArrowUp className="text-green" />;
-    }
-
-    case "UserMoneyOut": {
-      return <FaArrowDown className="text-red" />;
-    }
-
-    default: {
-      return null;
-    }
-  }
-}
-
-function Type({ children }: { children: TransactionType }) {
-  return readIcon(children);
-}
 
 export default async function Page({
   searchParams,
@@ -132,7 +111,7 @@ export default async function Page({
                 <tr key={item.id}>
                   <td className="rounded-start pe-0">
                     <div className="d-flex align-items-center justify-content-end">
-                      <Type>{item.type}</Type>
+                      <TransactionTypeIcon>{item.type}</TransactionTypeIcon>
                     </div>
                   </td>
 

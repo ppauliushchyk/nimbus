@@ -122,7 +122,7 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
       where: { id: rawAccount.id },
     });
 
-    const [{ insufficient }] = (await prisma.transaction.aggregateRaw({
+    const result = (await prisma.transaction.aggregateRaw({
       pipeline: [
         { $match: { accountId: { $oid: account.id } } },
         {
@@ -160,6 +160,8 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
         },
       ],
     })) as unknown as [{ insufficient: boolean }];
+
+    const insufficient = result[0]?.insufficient ?? true;
 
     if (insufficient) {
       return {

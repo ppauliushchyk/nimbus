@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         data: { transaction },
         success: true,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch {
     return Response.json({ success: false }, { status: 400 });
