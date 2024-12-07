@@ -20,7 +20,7 @@ export default function WithdrawForm() {
       router.back();
       mutate("/api/balance");
     }
-  }, [router, state?.success]);
+  }, [mutate, router, state?.success]);
 
   const handleCancel = useCallback(() => {
     router.back();
