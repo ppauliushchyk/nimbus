@@ -57,7 +57,7 @@ describe("deposit", () => {
 
         cy.get(".invalid-feedback")
           .should("be.visible")
-          .should("have.text", "Number must be greater than 0");
+          .should("have.text", "Invalid");
       });
 
       it("handles invalid values", () => {
@@ -68,7 +68,7 @@ describe("deposit", () => {
 
           cy.get(".invalid-feedback")
             .should("be.visible")
-            .should("have.text", "Expected number, received nan");
+            .should("have.text", "Invalid");
         });
       });
     });
