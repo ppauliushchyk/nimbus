@@ -14,7 +14,7 @@ export async function readBalanceAsync() {
     return 0;
   }
 
-  const [{ balance }] = (await prisma.transaction.aggregateRaw({
+  const result = (await prisma.transaction.aggregateRaw({
     pipeline: [
       { $match: { accountId: { $oid: account.id } } },
       {
@@ -44,7 +44,11 @@ export async function readBalanceAsync() {
     ],
   })) as unknown as [{ balance: number }];
 
-  return balance;
+  if (!result || !result[0] || !result[0].balance) {
+    return 0;
+  }
+
+  return result[0].balance;
 }
 
 const transactionSchema = z.object({ amount: coerce.number().gt(0) });
