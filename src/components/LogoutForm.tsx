@@ -11,7 +11,7 @@ export default function LogoutForm() {
 
   return (
     <form action={formAction}>
-      <SubmitButton className="btn-outline-dark">Logout</SubmitButton>
+      <SubmitButton className="btn-light">Logout</SubmitButton>
     </form>
   );
 }

@@ -20,7 +20,7 @@ export default function LoginForm() {
 
   return (
     <form action={formAction}>
-      <h1 className="fw-bold mb-4">Login</h1>
+      <h1 className="mb-4">Login</h1>
 
       <Input
         className="mb-4"

@@ -8,11 +8,15 @@
 
 $enable-shadows: false;
 
+$spacer: 1rem;
+
 $danger: #df4759;
 $dark: #1b2a4e;
+$green: #198754;
 $info: #7c69ef;
 $light: #f9fbfd;
 $primary: #335eea;
+$red: #dc3545;
 $secondary: #e9ecef;
 $success: #42ba96;
 $warning: #fad776;
@@ -21,6 +25,9 @@ $border-color: #e2e5f1;
 $card-border-color: #e2e5f1;
 $hr-color: #e2e5f1;
 
+$table-cell-padding-y: $spacer;
+$table-cell-padding-x: $spacer;
+
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
@@ -28,14 +35,26 @@ $hr-color: #e2e5f1;
 // 4. Include any default map overrides here
 
 $theme-colors: (
+  "danger": $danger,
+  "dark": $dark,
+  "green": $green,
+  "info": $info,
+  "light": $light,
   "primary": $primary,
+  "red": $red,
   "secondary": $secondary,
   "success": $success,
-  "info": $info,
   "warning": $warning,
-  "danger": $danger,
-  "light": $light,
-  "dark": $dark,
+);
+
+$font-sizes: (
+  1: $h1-font-size,
+  2: $h2-font-size,
+  3: $h3-font-size,
+  4: $h4-font-size,
+  5: $h5-font-size,
+  6: $h6-font-size,
+  7: $spacer * 0.75,
 );
 
 // 5. Include remainder of required parts

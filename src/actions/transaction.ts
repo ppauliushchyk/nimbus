@@ -8,11 +8,15 @@ import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
 export async function readBalanceAsync() {
-  const { id } = await readAccountAsync();
+  const account = await readAccountAsync();
 
-  const [{ balance }] = await prisma.transaction.aggregateRaw({
+  if (!account) {
+    return 0;
+  }
+
+  const [{ balance }] = (await prisma.transaction.aggregateRaw({
     pipeline: [
-      { $match: { accountId: { $oid: id } } },
+      { $match: { accountId: { $oid: account.id } } },
       {
         $group: {
           _id: null,
@@ -38,7 +42,7 @@ export async function readBalanceAsync() {
       },
       { $project: { balance: { $subtract: ["$deposits", "$withdrawals"] } } },
     ],
-  });
+  })) as unknown as [{ balance: number }];
 
   return balance;
 }
@@ -57,9 +61,18 @@ export async function depositAsync(_state: FormState, payload: FormData) {
   }
 
   try {
-    const { id } = await readAccountAsync();
+    const rawAccount = await readAccountAsync();
 
-    const account = await prisma.account.findUniqueOrThrow({ where: { id } });
+    if (!rawAccount) {
+      return {
+        error: "No account found",
+        success: false,
+      };
+    }
+
+    const account = await prisma.account.findUniqueOrThrow({
+      where: { id: rawAccount.id },
+    });
 
     await prisma.transaction.create({
       data: {
@@ -92,9 +105,18 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
   }
 
   try {
-    const { id } = await readAccountAsync();
+    const rawAccount = await readAccountAsync();
 
-    const account = await prisma.account.findUniqueOrThrow({ where: { id } });
+    if (!rawAccount) {
+      return {
+        error: "No account found",
+        success: false,
+      };
+    }
+
+    const account = await prisma.account.findUniqueOrThrow({
+      where: { id: rawAccount.id },
+    });
 
     const balance = await readBalanceAsync();
 

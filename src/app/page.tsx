@@ -10,7 +10,15 @@ export default function Page() {
         <div className="col-12 col-md-6 mx-auto">
           <LoginForm />
 
-          <hr className="my-5" />
+          <div className="d-flex align-items-center gap-2 my-3">
+            <hr className="flex-grow-1 m-0" />
+
+            <span className="fs-7 text-body-tertiary">
+              Or register a new account
+            </span>
+
+            <hr className="flex-grow-1 m-0" />
+          </div>
 
           <RegisterForm />
         </div>

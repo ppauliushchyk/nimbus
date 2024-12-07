@@ -19,10 +19,6 @@ export default function RegisterForm() {
 
   return (
     <form action={formAction}>
-      <h2 className="fs-6 fw-bold text-center mb-4">
-        Or register a new account
-      </h2>
-
       {state?.error && (
         <div className="alert alert-danger mb-4 text-break" role="alert">
           {state.error}

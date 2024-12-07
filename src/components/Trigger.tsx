@@ -32,5 +32,15 @@ export default function Trigger({ path, max }: { path: string; max: number }) {
     }
   }, [inView, loading, max, path, pathname, router, searchParams]);
 
-  return <div ref={ref} />;
+  return (
+    <div>
+      {loading && (
+        <div className="spinner-border spinner-border-sm" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
+
+      <div ref={ref} />
+    </div>
+  );
 }
