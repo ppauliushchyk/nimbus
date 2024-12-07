@@ -62,7 +62,10 @@ export default async function Page({
     <div className="row">
       <div className="col-12 col-md-5 col-lg-4 mx-auto">
         <div className="position-sticky top-0 pt-3">
-          <div className="card shadow rounded-4 text-bg-primary mb-4">
+          <div
+            className="card shadow rounded-4 text-bg-primary mb-4"
+            data-cy="account-card"
+          >
             <div className="card-body">
               <div className="fs-7 mb-3">
                 <div className="text-truncate opacity-50">Account</div>
