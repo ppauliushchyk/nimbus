@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const account = await prisma.account.upsert({
-    create: {},
+    create: { id: "6750ce0d3311469c225e256c" },
     update: {},
     where: { id: "6750ce0d3311469c225e256c" },
   });
