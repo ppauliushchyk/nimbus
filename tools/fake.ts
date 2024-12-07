@@ -36,6 +36,5 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.log("🚀 ~ main ~ error:", error);
   process.exit(1);
 });
