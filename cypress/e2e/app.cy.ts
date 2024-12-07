@@ -14,7 +14,7 @@ describe("app", () => {
       });
 
       it("renders basic structure", () => {
-        cy.visit("http://localhost:3000/");
+        cy.visit("/");
 
         cy.get(".container").should("be.visible");
 
@@ -34,7 +34,7 @@ describe("app", () => {
       });
 
       it("handles successful login", () => {
-        cy.visit("http://localhost:3000/");
+        cy.visit("/");
 
         cy.fixture("account.json").then((account) => {
           cy.get("input[name='id']").type(account.id);
@@ -46,7 +46,7 @@ describe("app", () => {
       });
 
       it("handles failed login", () => {
-        cy.visit("http://localhost:3000/");
+        cy.visit("/");
 
         cy.get("input[name='id']").type(faker.string.uuid());
 

@@ -10,7 +10,7 @@ describe("dashboard", () => {
       beforeEach(() => {
         cy.viewport(size[0], size[1]);
 
-        cy.visit("http://localhost:3000/");
+        cy.visit("/");
 
         cy.fixture("account.json").then((account) => {
           cy.get("input[name='id']").type(account.id);
