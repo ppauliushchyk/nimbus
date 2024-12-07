@@ -105,7 +105,15 @@ A robust financial application built with Next.js, Prisma ORM, MongoDB, and Boot
 
 **Running the Tests:**
 
-1. **Start the Application:**
+1. **Seed the Database (Optional):**
+
+   - This step is optional and depends on your project's requirements. If you need to populate your database with initial data, you can use the provided Prisma seed script:
+
+     ```bash
+     npx prisma db seed
+     ```
+
+2. **Start the Application:**
 
    - Open your terminal and navigate to the project directory.
 
@@ -117,7 +125,7 @@ A robust financial application built with Next.js, Prisma ORM, MongoDB, and Boot
 
    - This will start the application server on a specific port (http://localhost:3000).
 
-2. **Run the Realtime Balance Update Tests:**
+3. **Run the Realtime Balance Update Tests:**
 
    - In a separate terminal window, navigate to the project directory.
 
