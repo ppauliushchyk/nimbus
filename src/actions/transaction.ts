@@ -7,50 +7,6 @@ import { string, z } from "zod";
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
-export async function readBalanceAsync(): Promise<string> {
-  const account = await readAccountAsync();
-
-  if (!account) {
-    return "0";
-  }
-
-  const result = (await prisma.transaction.aggregateRaw({
-    pipeline: [
-      { $match: { accountId: { $oid: account.id } } },
-      {
-        $group: {
-          _id: null,
-          deposits: {
-            $sum: {
-              $cond: {
-                else: 0,
-                if: { $eq: ["$type", TransactionType.UserMoneyIn] },
-                then: { $toDecimal: "$amount" },
-              },
-            },
-          },
-          withdrawals: {
-            $sum: {
-              $cond: {
-                else: 0,
-                if: { $eq: ["$type", TransactionType.UserMoneyOut] },
-                then: { $toDecimal: "$amount" },
-              },
-            },
-          },
-        },
-      },
-      { $project: { balance: { $subtract: ["$deposits", "$withdrawals"] } } },
-    ],
-  })) as unknown as [{ balance: { $numberDecimal: string } }];
-
-  if (!result || !result[0] || !result[0].balance) {
-    return "0";
-  }
-
-  return result[0].balance.$numberDecimal;
-}
-
 const transactionSchema = z.object({ amount: string().regex(/^\d+(\.\d+)?$/) });
 
 type FormState =
