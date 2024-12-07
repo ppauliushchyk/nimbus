@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import React, { useActionState, useCallback, useEffect } from "react";
+import { useSWRConfig } from "swr";
 
 import { withdrawAsync } from "@/actions/transaction";
 
@@ -9,12 +10,15 @@ import Input from "./ui/Input";
 import SubmitButton from "./ui/SubmitButton";
 
 export default function WithdrawForm() {
+  const { mutate } = useSWRConfig();
+
   const router = useRouter();
   const [state, formAction] = useActionState(withdrawAsync, undefined);
 
   useEffect(() => {
     if (state?.success) {
       router.back();
+      mutate("/api/balance");
     }
   }, [router, state?.success]);
 

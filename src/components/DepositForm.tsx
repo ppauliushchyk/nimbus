@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import React, { useActionState, useCallback, useEffect } from "react";
+import { useSWRConfig } from "swr";
 
 import { depositAsync } from "@/actions/transaction";
 
@@ -9,14 +10,17 @@ import Input from "./ui/Input";
 import SubmitButton from "./ui/SubmitButton";
 
 export default function DepositForm() {
+  const { mutate } = useSWRConfig();
+
   const router = useRouter();
   const [state, formAction] = useActionState(depositAsync, undefined);
 
   useEffect(() => {
     if (state?.success) {
       router.back();
+      mutate("/api/balance");
     }
-  }, [router, state?.success]);
+  }, [mutate, router, state?.success]);
 
   const handleCancel = useCallback(() => {
     router.back();
