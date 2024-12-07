@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React, { HTMLAttributes } from "react";
 import { useFormStatus } from "react-dom";
 
-export function SubmitButton({
+export default function SubmitButton({
   children,
   className,
 }: HTMLAttributes<HTMLButtonElement>) {

@@ -5,7 +5,7 @@ import React, { useActionState, useEffect } from "react";
 
 import { registerAsync } from "@/actions/account";
 
-import { SubmitButton } from "./ui/SubmitButton";
+import SubmitButton from "./ui/SubmitButton";
 
 export default function RegisterForm() {
   const router = useRouter();

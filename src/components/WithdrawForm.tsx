@@ -6,7 +6,7 @@ import React, { useActionState, useCallback, useEffect } from "react";
 import { withdrawAsync } from "@/actions/transaction";
 
 import Input from "./ui/Input";
-import { SubmitButton } from "./ui/SubmitButton";
+import SubmitButton from "./ui/SubmitButton";
 
 export default function WithdrawForm() {
   const router = useRouter();

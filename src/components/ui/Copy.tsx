@@ -1,10 +1,10 @@
 "use client";
 
+import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
 import classNames from "classnames";
 import React, { HTMLAttributes, useCallback } from "react";
-import { MdContentCopy } from "react-icons/md";
 
-export function Copy({
+export default function Copy({
   className,
   children,
   value,
@@ -29,7 +29,7 @@ export function Copy({
     >
       <span className="text-truncate">{children}</span>
 
-      <MdContentCopy className="flex-shrink-0" />
+      <FaCopy className="flex-shrink-0" />
     </button>
   );
 }

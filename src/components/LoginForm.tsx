@@ -6,7 +6,7 @@ import React, { useActionState, useEffect } from "react";
 import { loginAsync } from "@/actions/account";
 
 import Input from "./ui/Input";
-import { SubmitButton } from "./ui/SubmitButton";
+import SubmitButton from "./ui/SubmitButton";
 
 export default function LoginForm() {
   const router = useRouter();

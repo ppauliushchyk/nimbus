@@ -31,7 +31,7 @@ export default function GlobalError({
               <h1>Something went wrong!</h1>
 
               <p className="text-body-secondary mb-4">
-                The page you're looking for might be broken.
+                The page you`&apos;re looking for might be broken.
               </p>
 
               <button

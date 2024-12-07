@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-export default function Modal({ children }: { children: ReactNode }) {
+export default function Modal({ children }: { children?: ReactNode }) {
   return (
     <>
       <div

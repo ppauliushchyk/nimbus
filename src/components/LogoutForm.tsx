@@ -4,7 +4,7 @@ import React, { useActionState } from "react";
 
 import { logoutAsync } from "@/actions/account";
 
-import { SubmitButton } from "./ui/SubmitButton";
+import SubmitButton from "./ui/SubmitButton";
 
 export default function LogoutForm() {
   const [, formAction] = useActionState(logoutAsync, undefined);

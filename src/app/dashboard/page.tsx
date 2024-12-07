@@ -1,24 +1,25 @@
 import { TransactionType } from "@prisma/client";
+import { FaArrowDown } from "@react-icons/all-files/fa/FaArrowDown";
+import { FaArrowUp } from "@react-icons/all-files/fa/FaArrowUp";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
-import { MdNorthEast, MdSouthEast } from "react-icons/md";
 
 import { readBalanceAsync } from "@/actions/transaction";
-import Trigger from "@/components/Trigger";
-import { Copy } from "@/components/ui/Copy";
+import Copy from "@/components/ui/Copy";
+import Trigger from "@/components/ui/Trigger";
 import { readAccountAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
 function readIcon(type: TransactionType) {
   switch (type) {
     case "UserMoneyIn": {
-      return <MdNorthEast className="text-green" />;
+      return <FaArrowUp className="text-green" />;
     }
 
     case "UserMoneyOut": {
-      return <MdSouthEast className="text-red" />;
+      return <FaArrowDown className="text-red" />;
     }
 
     default: {
@@ -145,7 +146,10 @@ export default async function Page({
               ))}
               {transactions.length === 0 && (
                 <tr>
-                  <td className="text-center text-body-tertiary rounded" colSpan={3}>
+                  <td
+                    className="text-center text-body-tertiary rounded"
+                    colSpan={3}
+                  >
                     No transactions were found
                   </td>
                 </tr>
