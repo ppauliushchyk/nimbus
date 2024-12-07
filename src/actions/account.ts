@@ -6,9 +6,7 @@ import { string, z } from "zod";
 import prisma from "@/lib/prisma";
 import { createSession, deleteSession } from "@/lib/session";
 
-const loginSchema = z.object({
-  id: string().min(24),
-});
+const loginSchema = z.object({ id: string().min(24) });
 
 type FormState = { errors?: { id?: string[] }; message?: string } | undefined;
 
