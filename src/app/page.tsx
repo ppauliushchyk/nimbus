@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="container">
       <div className="row py-4 justify-content-center align-items-center vh-100">
-        <div className="col-12 col-md-6 mx-auto">
+        <div className="col-12 col-md-6 col-xl-4 mx-auto">
           <LoginForm />
 
           <div className="d-flex align-items-center gap-2 my-3">

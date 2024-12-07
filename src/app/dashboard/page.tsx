@@ -59,7 +59,7 @@ export default async function Page({
 
   return (
     <div className="row">
-      <div className="col-12 col-md-4 mx-auto">
+      <div className="col-12 col-md-5 col-lg-4 mx-auto">
         <div className="position-sticky top-0 pt-3">
           <div className="card shadow rounded-4 text-bg-primary mb-4">
             <div className="card-body">
@@ -98,7 +98,7 @@ export default async function Page({
         </div>
       </div>
 
-      <div className="col-12 col-md-8">
+      <div className="col-12 col-md-7 col-lg-8">
         <div className="table-responsive">
           <table className="table table-borderless table-hover align-middle mb-0">
             <thead>
@@ -145,7 +145,7 @@ export default async function Page({
               ))}
               {transactions.length === 0 && (
                 <tr>
-                  <td className="text-center text-body-tertiary" colSpan={3}>
+                  <td className="text-center text-body-tertiary rounded" colSpan={3}>
                     No transactions were found
                   </td>
                 </tr>
