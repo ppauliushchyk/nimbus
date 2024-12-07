@@ -4,7 +4,7 @@ import { TransactionType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { string, z } from "zod";
 
-import { readAccountAsync } from "@/lib/dal";
+import { verifySessionAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
 
 const transactionSchema = z.object({ amount: string().regex(/^\d+(\.\d+)?$/) });
@@ -21,9 +21,9 @@ export async function depositAsync(_state: FormState, payload: FormData) {
   }
 
   try {
-    const rawAccount = await readAccountAsync();
+    const session = await verifySessionAsync();
 
-    if (!rawAccount) {
+    if (!session) {
       return {
         error: "No account found",
         success: false,
@@ -31,7 +31,7 @@ export async function depositAsync(_state: FormState, payload: FormData) {
     }
 
     const account = await prisma.account.findUniqueOrThrow({
-      where: { id: rawAccount.id },
+      where: { id: session.id.toString() },
     });
 
     await prisma.transaction.create({
@@ -65,9 +65,9 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
   }
 
   try {
-    const rawAccount = await readAccountAsync();
+    const session = await verifySessionAsync();
 
-    if (!rawAccount) {
+    if (!session) {
       return {
         error: "No account found",
         success: false,
@@ -75,7 +75,7 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
     }
 
     const account = await prisma.account.findUniqueOrThrow({
-      where: { id: rawAccount.id },
+      where: { id: session.id.toString() },
     });
 
     const result = (await prisma.transaction.aggregateRaw({

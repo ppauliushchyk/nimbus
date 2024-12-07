@@ -10,18 +10,27 @@ async function main() {
     where: { id: "6750ce0d3311469c225e256c" },
   });
 
-  const count = await prisma.transaction.count({
-    where: { accountId: account.id },
-  });
+  const count = 1000
+    - (await prisma.transaction.count({
+      where: { accountId: account.id },
+    }));
 
-  const end = 1000 - count;
-
-  for (let i = 0; i < end; i += 1) {
+  for (let i = 0; i < count; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
     await prisma.transaction.create({
       data: {
         accountId: account.id,
         amount: faker.finance.amount({ symbol: "" }),
-        type: faker.helpers.enumValue(TransactionType),
+        type: faker.helpers.weightedArrayElement([
+          {
+            value: TransactionType.UserMoneyIn,
+            weight: 8,
+          },
+          {
+            value: TransactionType.UserMoneyOut,
+            weight: 2,
+          },
+        ]),
       },
     });
   }

@@ -19,7 +19,6 @@ export async function POST(request: Request) {
     });
 
     const data = await request.json();
-
     const parsed = await transactionSchema.parseAsync(data);
 
     const result = (await prisma.transaction.aggregateRaw({
@@ -82,7 +81,17 @@ export async function POST(request: Request) {
       },
       { status: 200 },
     );
-  } catch {
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json(
+        {
+          message: error.message,
+          success: false,
+        },
+        { status: 400 },
+      );
+    }
+
     return Response.json({ success: false }, { status: 400 });
   }
 }

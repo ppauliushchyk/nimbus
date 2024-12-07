@@ -25,16 +25,17 @@ export default async function Page({
     notFound();
   }
 
-  const transactions = await prisma.transaction.findMany({
-    orderBy: { updatedAt: "desc" },
-    skip: 0,
-    take: parseInt(limit || "0", 10),
-    where: { accountId: account.id },
-  });
-
-  const count = await prisma.transaction.count({
-    where: { accountId: account.id },
-  });
+  const [transactions, count] = await Promise.all([
+    prisma.transaction.findMany({
+      orderBy: { updatedAt: "desc" },
+      skip: 0,
+      take: parseInt(limit || "0", 10),
+      where: { accountId: account.id },
+    }),
+    prisma.transaction.count({
+      where: { accountId: account.id },
+    }),
+  ]);
 
   return (
     <div className="row">

@@ -1,3 +1,3 @@
-export default async function Default() {
+export default function Default() {
   return null;
 }

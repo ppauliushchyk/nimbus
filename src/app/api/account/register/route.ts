@@ -11,7 +11,17 @@ export async function POST() {
       data: { account },
       success: true,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json(
+        {
+          message: error.message,
+          success: false,
+        },
+        { status: 400 },
+      );
+    }
+
     return Response.json({ success: false }, { status: 400 });
   }
 }

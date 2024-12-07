@@ -9,7 +9,7 @@ export default function Input({
   name,
 }: InputHTMLAttributes<HTMLInputElement> & {
   description?: string;
-  errors?: string[] | undefined;
+  errors?: string[];
   label: string;
 }) {
   return (
@@ -42,3 +42,8 @@ export default function Input({
     </div>
   );
 }
+
+Input.defaultProps = {
+  description: undefined,
+  errors: undefined,
+};

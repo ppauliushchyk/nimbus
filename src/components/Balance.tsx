@@ -11,6 +11,10 @@ export default function Balance() {
     refreshInterval: 10000,
   });
 
+  if (error) {
+    return <span className="text-danger">Something went wrong</span>;
+  }
+
   if (isLoading) {
     return (
       <div className="d-inline-flex align-items-center">
@@ -19,10 +23,6 @@ export default function Balance() {
         </div>
       </div>
     );
-  }
-
-  if (error) {
-    return <span className="text-danger">Something went wrong</span>;
   }
 
   return (

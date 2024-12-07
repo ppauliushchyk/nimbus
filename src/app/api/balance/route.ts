@@ -37,17 +37,33 @@ export async function GET() {
             },
           },
         },
-        { $project: { balance: { $subtract: ["$deposits", "$withdrawals"] } } },
+        {
+          $project: {
+            balance: {
+              $toString: { $subtract: ["$deposits", "$withdrawals"] },
+            },
+          },
+        },
       ],
-    })) as unknown as [{ balance: { $numberDecimal: string } }];
+    })) as unknown as [{ balance: string }];
 
-    const balance = result[0]?.balance?.$numberDecimal ?? 0;
+    const balance = result[0]?.balance ?? "0";
 
     return Response.json({
       data: { balance },
       success: true,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json(
+        {
+          message: error.message,
+          success: false,
+        },
+        { status: 400 },
+      );
+    }
+
     return Response.json({ success: false }, { status: 400 });
   }
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 import WithdrawForm from "@/components/WithdrawForm";
 
-export default async function Page() {
+export default function Page() {
   return (
     <div className="row">
       <div className="col">

@@ -5,13 +5,13 @@ import { FaArrowDown } from "@react-icons/all-files/fa/FaArrowDown";
 import { FaArrowUp } from "@react-icons/all-files/fa/FaArrowUp";
 import React from "react";
 
-function readIcon(type: TransactionType) {
+function icon(type: TransactionType) {
   switch (type) {
-    case "UserMoneyIn": {
+    case TransactionType.UserMoneyIn: {
       return <FaArrowUp className="text-green" />;
     }
 
-    case "UserMoneyOut": {
+    case TransactionType.UserMoneyOut: {
       return <FaArrowDown className="text-red" />;
     }
 
@@ -26,5 +26,5 @@ export default function TransactionTypeIcon({
 }: {
   children: TransactionType;
 }) {
-  return readIcon(children);
+  return icon(children);
 }

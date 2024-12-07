@@ -33,3 +33,7 @@ export default function Copy({
     </button>
   );
 }
+
+Copy.defaultProps = {
+  value: undefined,
+};

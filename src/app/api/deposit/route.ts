@@ -1,5 +1,4 @@
 import { TransactionType } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 import { string, z } from "zod";
 
 import { verifySessionAsync } from "@/lib/dal";
@@ -20,7 +19,6 @@ export async function POST(request: Request) {
     });
 
     const data = await request.json();
-
     const parsed = await transactionSchema.parseAsync(data);
 
     const transaction = await prisma.transaction.create({
@@ -31,8 +29,6 @@ export async function POST(request: Request) {
       },
     });
 
-    revalidatePath("/dashboard", "page");
-
     return Response.json(
       {
         data: { transaction },
@@ -40,7 +36,17 @@ export async function POST(request: Request) {
       },
       { status: 200 },
     );
-  } catch {
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json(
+        {
+          message: error.message,
+          success: false,
+        },
+        { status: 400 },
+      );
+    }
+
     return Response.json({ success: false }, { status: 400 });
   }
 }

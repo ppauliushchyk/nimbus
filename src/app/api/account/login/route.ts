@@ -8,7 +8,6 @@ const loginSchema = z.object({ id: string().min(24) });
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-
     const parsed = await loginSchema.parseAsync(data);
 
     const account = await prisma.account.findUniqueOrThrow({
@@ -21,7 +20,17 @@ export async function POST(request: Request) {
       data: { account },
       success: true,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json(
+        {
+          message: error.message,
+          success: false,
+        },
+        { status: 400 },
+      );
+    }
+
     return Response.json({ success: false }, { status: 400 });
   }
 }
