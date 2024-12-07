@@ -36,8 +36,8 @@ A robust financial application built with Next.js, Prisma ORM, MongoDB, and Boot
 
 4. **Set Up Environment Variables:**
 
-   - Locate the `.env.template` file within the project directory.
-   - Copy the `.env.template` file and rename it to `.env`.
+   - Locate the `.template.env` file within the project directory.
+   - Copy the `.template.env` file and rename it to `.env`.
    - Open the `.env` file in a text editor and set the required environment variables.
 
 5. **Seed the Database (Optional):**
