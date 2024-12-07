@@ -25,8 +25,12 @@ export default function Balance() {
     return <span className="text-danger">Something went wrong</span>;
   }
 
-  return new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    style: "currency",
-  }).format(data.data.balance);
+  return (
+    <span data-cy="balance">
+      {new Intl.NumberFormat("en-US", {
+        currency: "USD",
+        style: "currency",
+      }).format(data.data.balance)}
+    </span>
+  );
 }

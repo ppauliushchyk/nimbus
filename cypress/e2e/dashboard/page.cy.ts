@@ -48,6 +48,29 @@ describe("dashboard", () => {
         cy.get(".modal").should("be.visible");
         cy.get("h2").should("be.visible").should("have.text", "Withdraw funds");
       });
+
+      it("handles balance refresh", () => {
+        cy.intercept("/api/balance").as("api:balance");
+
+        cy.get("[data-cy='balance']")
+          .should("be.visible")
+          .then((element) => {
+            const current = element.text().replace("$", "").replace(",", "");
+
+            cy.request("POST", "/api/deposit", { amount: "10" });
+
+            cy.wait("@api:balance", { timeout: 20000 }).then(() => {
+              cy.get("[data-cy='balance']")
+                .should("be.visible")
+                .should(
+                  "include.text",
+                  new Intl.NumberFormat("en-US").format(
+                    Math.abs(parseInt(current, 10) + 10)
+                  )
+                );
+            });
+          });
+      });
     });
   });
 });
