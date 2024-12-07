@@ -19,19 +19,23 @@
     "bootstrap": "5.3.3",
     "classnames": "^2.5.1",
     "jose": "^5.9.6",
+    "luxon": "^3.5.0",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-icons": "^5.4.0",
     "react-intersection-observer": "^9.13.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.3.0",
     "@stylistic/eslint-plugin-js": "^2.11.0",
     "@stylistic/eslint-plugin-jsx": "^2.11.0",
     "@stylistic/eslint-plugin-ts": "^2.11.0",
+    "@types/luxon": "^3.4.2",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "cypress": "^13.16.0",
     "eslint": "^8",
     "eslint-config-airbnb": "^19.0.4",
@@ -41,6 +45,10 @@
     "prisma": "^6.0.1",
     "sass": "1.71.0",
     "start-server-and-test": "^2.0.8",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
