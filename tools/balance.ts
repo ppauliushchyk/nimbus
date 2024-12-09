@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 function delay(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
 }
@@ -35,6 +36,6 @@ async function main() {
   }
 }
 
-main().catch((error) => {
+main().catch(() => {
   process.exit(1);
 });
