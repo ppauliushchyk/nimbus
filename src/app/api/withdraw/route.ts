@@ -1,8 +1,8 @@
-import { TransactionType } from "@prisma/client";
 import { string, z } from "zod";
 
 import { verifySessionAsync } from "@/lib/dal";
 import prisma from "@/lib/prisma";
+import { createWithdrawalAsync } from "@/services/transaction";
 
 const transactionSchema = z.object({ amount: string().regex(/^\d+(\.\d+)?$/) });
 
@@ -21,60 +21,18 @@ export async function POST(request: Request) {
     const data = await request.json();
     const parsed = await transactionSchema.parseAsync(data);
 
-    const transaction = await prisma.$transaction(async () => {
-      const result = (await prisma.transaction.aggregateRaw({
-        pipeline: [
-          { $match: { accountId: { $oid: account.id } } },
-          {
-            $group: {
-              _id: null,
-              deposits: {
-                $sum: {
-                  $cond: {
-                    else: 0,
-                    if: { $eq: ["$type", TransactionType.UserMoneyIn] },
-                    then: { $toDecimal: "$amount" },
-                  },
-                },
-              },
-              withdrawals: {
-                $sum: {
-                  $cond: {
-                    else: 0,
-                    if: { $eq: ["$type", TransactionType.UserMoneyOut] },
-                    then: { $toDecimal: "$amount" },
-                  },
-                },
-              },
-            },
-          },
-          {
-            $project: {
-              insufficient: {
-                $gt: [
-                  { $toDecimal: parsed.amount },
-                  { $subtract: ["$deposits", "$withdrawals"] },
-                ],
-              },
-            },
-          },
-        ],
-      })) as unknown as [{ insufficient: boolean }];
+    const result = await createWithdrawalAsync({
+      accountId: account.id,
+      amount: parsed.amount,
+    });
 
-      const insufficient = result[0]?.insufficient ?? true;
+    if (!result) {
+      return Response.json({ success: false }, { status: 402 });
+    }
 
-      if (insufficient) {
-        return Response.json({ success: false }, { status: 402 });
-      }
-
-      return prisma.transaction.create({
-        data: {
-          accountId: account.id,
-          amount: parsed.amount,
-          type: TransactionType.UserMoneyOut,
-        },
-      });
-    }, {});
+    const transaction = await prisma.transaction.findUniqueOrThrow({
+      where: { id: result.insertedId.toString() },
+    });
 
     return Response.json(
       {
