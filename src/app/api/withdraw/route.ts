@@ -21,58 +21,60 @@ export async function POST(request: Request) {
     const data = await request.json();
     const parsed = await transactionSchema.parseAsync(data);
 
-    const result = (await prisma.transaction.aggregateRaw({
-      pipeline: [
-        { $match: { accountId: { $oid: account.id } } },
-        {
-          $group: {
-            _id: null,
-            deposits: {
-              $sum: {
-                $cond: {
-                  else: 0,
-                  if: { $eq: ["$type", TransactionType.UserMoneyIn] },
-                  then: { $toDecimal: "$amount" },
+    const transaction = await prisma.$transaction(async () => {
+      const result = (await prisma.transaction.aggregateRaw({
+        pipeline: [
+          { $match: { accountId: { $oid: account.id } } },
+          {
+            $group: {
+              _id: null,
+              deposits: {
+                $sum: {
+                  $cond: {
+                    else: 0,
+                    if: { $eq: ["$type", TransactionType.UserMoneyIn] },
+                    then: { $toDecimal: "$amount" },
+                  },
                 },
               },
-            },
-            withdrawals: {
-              $sum: {
-                $cond: {
-                  else: 0,
-                  if: { $eq: ["$type", TransactionType.UserMoneyOut] },
-                  then: { $toDecimal: "$amount" },
+              withdrawals: {
+                $sum: {
+                  $cond: {
+                    else: 0,
+                    if: { $eq: ["$type", TransactionType.UserMoneyOut] },
+                    then: { $toDecimal: "$amount" },
+                  },
                 },
               },
             },
           },
-        },
-        {
-          $project: {
-            insufficient: {
-              $gt: [
-                { $toDecimal: parsed.amount },
-                { $subtract: ["$deposits", "$withdrawals"] },
-              ],
+          {
+            $project: {
+              insufficient: {
+                $gt: [
+                  { $toDecimal: parsed.amount },
+                  { $subtract: ["$deposits", "$withdrawals"] },
+                ],
+              },
             },
           },
+        ],
+      })) as unknown as [{ insufficient: boolean }];
+
+      const insufficient = result[0]?.insufficient ?? true;
+
+      if (insufficient) {
+        return Response.json({ success: false }, { status: 402 });
+      }
+
+      return prisma.transaction.create({
+        data: {
+          accountId: account.id,
+          amount: parsed.amount,
+          type: TransactionType.UserMoneyOut,
         },
-      ],
-    })) as unknown as [{ insufficient: boolean }];
-
-    const insufficient = result[0]?.insufficient ?? true;
-
-    if (insufficient) {
-      return Response.json({ success: false }, { status: 402 });
-    }
-
-    const transaction = await prisma.transaction.create({
-      data: {
-        accountId: account.id,
-        amount: parsed.amount,
-        type: TransactionType.UserMoneyOut,
-      },
-    });
+      });
+    }, {});
 
     return Response.json(
       {

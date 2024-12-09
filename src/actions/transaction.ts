@@ -78,61 +78,65 @@ export async function withdrawAsync(_state: FormState, payload: FormData) {
       where: { id: session.id.toString() },
     });
 
-    const result = (await prisma.transaction.aggregateRaw({
-      pipeline: [
-        { $match: { accountId: { $oid: account.id } } },
-        {
-          $group: {
-            _id: null,
-            deposits: {
-              $sum: {
-                $cond: {
-                  else: 0,
-                  if: { $eq: ["$type", TransactionType.UserMoneyIn] },
-                  then: { $toDecimal: "$amount" },
+    await prisma.$transaction(async () => {
+      const result = (await prisma.transaction.aggregateRaw({
+        pipeline: [
+          { $match: { accountId: { $oid: account.id } } },
+          {
+            $group: {
+              _id: null,
+              deposits: {
+                $sum: {
+                  $cond: {
+                    else: 0,
+                    if: { $eq: ["$type", TransactionType.UserMoneyIn] },
+                    then: { $toDecimal: "$amount" },
+                  },
                 },
               },
-            },
-            withdrawals: {
-              $sum: {
-                $cond: {
-                  else: 0,
-                  if: { $eq: ["$type", TransactionType.UserMoneyOut] },
-                  then: { $toDecimal: "$amount" },
+              withdrawals: {
+                $sum: {
+                  $cond: {
+                    else: 0,
+                    if: { $eq: ["$type", TransactionType.UserMoneyOut] },
+                    then: { $toDecimal: "$amount" },
+                  },
                 },
               },
             },
           },
-        },
-        {
-          $project: {
-            insufficient: {
-              $gt: [
-                { $toDecimal: parsed.data.amount },
-                { $subtract: ["$deposits", "$withdrawals"] },
-              ],
+          {
+            $project: {
+              insufficient: {
+                $gt: [
+                  { $toDecimal: parsed.data.amount },
+                  { $subtract: ["$deposits", "$withdrawals"] },
+                ],
+              },
             },
           },
+        ],
+      })) as unknown as [{ insufficient: boolean }];
+
+      const insufficient = result[0]?.insufficient ?? true;
+
+      if (insufficient) {
+        return {
+          error:
+            "Your current balance is insufficient to complete this transaction.",
+          success: false,
+        };
+      }
+
+      const transaction = await prisma.transaction.create({
+        data: {
+          accountId: account.id,
+          amount: parsed.data.amount,
+          type: TransactionType.UserMoneyOut,
         },
-      ],
-    })) as unknown as [{ insufficient: boolean }];
+      });
 
-    const insufficient = result[0]?.insufficient ?? true;
-
-    if (insufficient) {
-      return {
-        error:
-          "Your current balance is insufficient to complete this transaction.",
-        success: false,
-      };
-    }
-
-    await prisma.transaction.create({
-      data: {
-        accountId: account.id,
-        amount: parsed.data.amount,
-        type: TransactionType.UserMoneyOut,
-      },
+      return transaction;
     });
 
     revalidatePath("/dashboard", "page");
